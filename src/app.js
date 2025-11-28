@@ -1,6 +1,8 @@
 const express = require('express');
 const morgan = require('morgan');
 const qs = require('qs');
+const AppError = require('./utils/appError');
+const globalErrorHandler = require('./controllers/globalErrorHandler');
 
 const app = express();
 
@@ -15,20 +17,9 @@ app.get('/', (req, res) => {
 });
 
 app.use((req, res, next) => {
-  const err = new Error(`Can't reach ${req.originalUrl}`);
-  err.status = 'fail';
-  err.statusCode = 404;
-  next(err);
+  next(new AppError(`Can't reach ${req.originalUrl}`, 404));
 });
 
-app.use((err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error';
-  err.message = err.message || 'something went wrong';
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message
-  });
-});
+app.use(globalErrorHandler);
 
 module.exports = app;

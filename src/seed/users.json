@@ -1,0 +1,102 @@
+[
+  {
+    "firstName": "ahmed",
+    "lastName": "khaled",
+    "birthday": "1998-03-12",
+    "email": "ahmed.khaled@example.com",
+    "password": "Password123",
+    "confirmPassword": "Password123",
+    "rank": "Bronze",
+    "role": "User"
+  },
+  {
+    "firstName": "sara",
+    "lastName": "hassan",
+    "birthday": "2000-07-22",
+    "email": "sara.hassan@example.com",
+    "password": "StrongPass1",
+    "confirmPassword": "StrongPass1",
+    "rank": "Silver",
+    "role": "User"
+  },
+  {
+    "firstName": "mohamed",
+    "lastName": "fathy",
+    "birthday": "1995-01-09",
+    "email": "mohamed.fathy@example.com",
+    "password": "MySecret12",
+    "confirmPassword": "MySecret12",
+    "rank": "Gold",
+    "role": "Admin"
+  },
+  {
+    "firstName": "lina",
+    "lastName": "adel",
+    "birthday": "1999-11-30",
+    "email": "lina.adel@example.com",
+    "password": "Qwerty123",
+    "confirmPassword": "Qwerty123",
+    "rank": "Platinum",
+    "role": "User"
+  },
+  {
+    "firstName": "kareem",
+    "lastName": "mansour",
+    "birthday": "1997-02-17",
+    "email": "kareem.mansour@example.com",
+    "password": "Pass2024!",
+    "confirmPassword": "Pass2024!",
+    "rank": "Silver",
+    "role": "User"
+  },
+  {
+    "firstName": "dina",
+    "lastName": "ramy",
+    "birthday": "2001-08-14",
+    "email": "dina.ramy@example.com",
+    "password": "TestPass99",
+    "confirmPassword": "TestPass99",
+    "rank": "Bronze",
+    "role": "User"
+  },
+  {
+    "firstName": "omar",
+    "lastName": "saeed",
+    "birthday": "1996-05-03",
+    "email": "omar.saeed@example.com",
+    "password": "OmarStrong1",
+    "confirmPassword": "OmarStrong1",
+    "rank": "Gold",
+    "role": "Admin"
+  },
+  {
+    "firstName": "jana",
+    "lastName": "tarek",
+    "birthday": "2002-10-25",
+    "email": "jana.tarek@example.com",
+    "password": "Jana2025!",
+    "confirmPassword": "Jana2025!",
+    "rank": "Platinum",
+    "role": "User"
+  },
+  {
+    "firstName": "hadi",
+    "lastName": "yousef",
+    "birthday": "1994-06-18",
+    "email": "hadi.yousef@example.com",
+    "password": "HadiSecure1",
+    "confirmPassword": "HadiSecure1",
+    "rank": "Silver",
+    "role": "User"
+  },
+  {
+    "firstName": "mira",
+    "lastName": "salim",
+    "birthday": "1999-09-09",
+    "email": "mira.salim@example.com",
+    "password": "MiraPass88",
+    "confirmPassword": "MiraPass88",
+    "rank": "Bronze",
+    "role": "User"
+  }
+]

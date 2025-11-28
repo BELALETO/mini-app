@@ -1,23 +1,26 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
-const { salt } = require('../config/config');
 
 const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
-      required: [true, 'First name is required']
+      required: [true, 'First name is required'],
+      trim: true,
+      maxLength: 50
     },
     lastName: {
       type: String,
-      required: [true, 'Last name is required']
+      required: [true, 'Last name is required'],
+      trim: true,
+      maxLength: 50
     },
     birthday: {
       type: Date,
       required: [true, 'Birthday is required'],
       validate: {
-        validator: (d) => validator.isDate(d),
+        validator: (d) => d instanceof Date && !isNaN(d.getTime()),
         message: (props) => `${props.value} isn't a valid date`
       }
     },
@@ -25,9 +28,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "User's email is required"],
       unique: true,
+      lowercase: true,
       validate: {
         validator: (e) => validator.isEmail(e),
-        message: (props) => `${props.value} is not a valid email!`
+        message: (props) => `${props.value} is not a valid email`
       }
     },
     role: {
@@ -44,23 +48,24 @@ const userSchema = new mongoose.Schema(
       enum: {
         values: ['Bronze', 'Silver', 'Gold', 'Platinum'],
         message: '{VALUE} is not supported'
-      }
+      },
+      default: 'Bronze'
     },
     password: {
       type: String,
       required: [true, 'Password is required'],
-      minLength: [8, 'password has to be 8 charachters at least'],
+      minLength: [8, 'Password must be at least 8 characters'],
       select: false
     },
     confirmPassword: {
       type: String,
-      required: [true, "You've to confirm your password"],
+      required: [true, 'You must confirm your password'],
       minLength: 8,
       validate: {
         validator: function (pass) {
           return this.password === pass;
         },
-        message: "Passwords don't match!"
+        message: 'Passwords do not match'
       }
     }
   },
@@ -73,7 +78,6 @@ userSchema.virtual('fullName').get(function () {
 
 userSchema.virtual('age').get(function () {
   const today = new Date();
-
   let age = today.getFullYear() - this.birthday.getFullYear();
   const monthDiff = today.getMonth() - this.birthday.getMonth();
   const dayDiff = today.getDate() - this.birthday.getDate();
@@ -81,18 +85,17 @@ userSchema.virtual('age').get(function () {
   if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
     age--;
   }
-
   return age;
 });
 
 userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) return next();
-  this.password = await bcrypt.hash(this.password, salt);
+  if (!this.isModified('password')) return;
+  this.password = await bcrypt.hash(this.password, 12);
   this.confirmPassword = undefined;
-  next();
+  return;
 });
 
-userSchema.methods.checkPasswords = async function (inputPassword) {
+userSchema.methods.correctPassword = async function (inputPassword) {
   return await bcrypt.compare(inputPassword, this.password);
 };
 

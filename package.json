@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./src/server.js",
-    "dev": "nodemon ./src/server.js",
+    "dev": "NODE_ENV=development nodemon ./src/server.js",
+    "seed": "node ./src/seed/seed.js --import",
+    "delete": "node ./src/seed/seed.js --delete",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write ."

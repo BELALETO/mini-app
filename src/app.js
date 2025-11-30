@@ -5,6 +5,7 @@ const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/globalErrorHandler');
 const authRouter = require('./routes/authRouter');
 const userRouter = require('./routes/userRouter');
+const { disconnectDB } = require('./config/db');
 
 const app = express();
 
@@ -26,5 +27,18 @@ app.use((req, res, next) => {
 });
 
 app.use(globalErrorHandler);
+
+process.on('uncaughtException', async (err) => {
+  console.error(err);
+  await disconnectDB();
+  console.log('shutting down the server...');
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error(`unhandled Rejection at ${promise} because of ${reason}`);
+  console.log('shutting down the server...');
+  process.exit(1);
+});
 
 module.exports = app;

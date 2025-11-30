@@ -7,25 +7,75 @@ const NodeCache = require('node-cache');
 const userCache = new NodeCache({ stdTTL: 60 });
 
 const getAllUsers = catchAsync(async (req, res, next) => {
-  const key = 'users';
+  const key = `users-${JSON.stringify(req.query)}`;
   const cachedData = userCache.get(key);
   if (cachedData) {
-    console.log("It's allready exist");
+    console.log("It's already exist");
     return res.status(200).json({
       status: 'success',
       data: cachedData
     });
   }
 
-  console.log("I'll cache it");
-  const users = await User.find();
-  userCache.set(key, users);
+  const queryObj = { ...req.query };
+  const excludedFields = ['fields', 'sort', 'page', 'limit'];
+  excludedFields.forEach((q) => delete queryObj[q]);
+
+  let queryString = JSON.stringify(queryObj);
+  queryString = queryString.replace(
+    /\b(gt|gte|lt|lte|in)\b/g,
+    (match) => `$${match}`
+  );
+  let parsedQuery = JSON.parse(queryString);
+
+  // Convert numbers
+  for (const key in parsedQuery) {
+    if (typeof parsedQuery[key] === 'object') {
+      for (const op in parsedQuery[key]) {
+        const val = parsedQuery[key][op];
+        parsedQuery[key][op] = !isNaN(val) ? Number(val) : val;
+      }
+    }
+  }
+
+  let query = User.find(parsedQuery);
+
+  if (req.query.sort) {
+    const sortBy = req.query.sort.split(',').join(' ');
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort('-createdAt');
+  }
+
+  if (req.query.fields) {
+    const fields = req.query.fields.split(',').join(' ');
+    query = query.select(fields);
+  } else {
+    query = query.select('-__v');
+  }
+
+  const page = req.query.page * 1 || 1;
+  const limit = req.query.limit * 1 || 100;
+  const skip = (page - 1) * limit;
+  query = query.skip(skip).limit(limit);
+
+  if (req.query.page) {
+    const numUsers = await User.countDocuments(parsedQuery);
+    if (skip >= numUsers) {
+      return next(new AppError('This page does not exist', 404));
+    }
+  }
+
+  const users = await query;
+  userCache.set(
+    key,
+    users.map((u) => u.toObject())
+  );
+
   res.status(200).json({
     status: 'success',
     results: users.length,
-    data: {
-      users
-    }
+    data: { users }
   });
 });
 

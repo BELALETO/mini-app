@@ -28,6 +28,7 @@ app.use((req, res, next) => {
 
 app.use(globalErrorHandler);
 
+//TODO: change this to graceful shutdown
 process.on('uncaughtException', async (err) => {
   console.error(err);
   await disconnectDB();
@@ -35,6 +36,7 @@ process.on('uncaughtException', async (err) => {
   process.exit(1);
 });
 
+//TODO: change this to graceful shutdown
 process.on('unhandledRejection', (reason, promise) => {
   console.error(`unhandled Rejection at ${promise} because of ${reason}`);
   console.log('shutting down the server...');

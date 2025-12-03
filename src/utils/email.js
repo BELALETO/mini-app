@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const { sendGridApiKey, sendGridEmail } = require('../config/config');
+const AppError = require('./appError');
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.sendgrid.net',
@@ -11,20 +12,16 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-async function sendEmail(options) {
-  try {
-    const info = await transporter.sendMail({
-      from: sendGridEmail,
-      to: options.to,
-      subject: options.subject,
-      text: options.text,
-      html: options.html || `<p>${options.text}</p>`
-    });
+const sendEmail = async ({ to, subject, text, html }) => {
+  const info = await transporter.sendMail({
+    from: sendGridEmail,
+    to: to,
+    subject: subject,
+    text: text,
+    html: html || `<p>${text}</p>`
+  });
 
-    console.log('Email sent:', info.messageId);
-  } catch (err) {
-    console.error('Error sending email:', err);
-  }
-}
+  console.log('Email sent:', info.messageId);
+};
 
 module.exports = sendEmail;

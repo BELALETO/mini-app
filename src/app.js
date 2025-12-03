@@ -6,6 +6,7 @@ const globalErrorHandler = require('./controllers/globalErrorHandler');
 const authRouter = require('./routes/authRouter');
 const userRouter = require('./routes/userRouter');
 const { disconnectDB } = require('./config/db');
+const sendEmail = require('./utils/email');
 
 const app = express();
 
@@ -17,6 +18,21 @@ app.use(express.json());
 // Sample route
 app.get('/', (req, res) => {
   res.send('Hello World!');
+});
+
+app.get('/send-email', async (req, res) => {
+  try {
+    await sendEmail({
+      to: 'belalsryo@gmail.com',
+      subject: 'Test Email from SendGrid',
+      text: 'This is a test email sent using SendGrid SMTP.'
+    });
+    res.status(200).json({ message: 'Email sent successfully' });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: 'Failed to send email', error: error.message });
+  }
 });
 
 app.use('/api/v1/auth', authRouter);
